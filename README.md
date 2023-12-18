@@ -32,3 +32,23 @@ Infrastructure as Code with tf
 ### Apply configuration without confirming
 
 - `terraform apply -auto-approve`
+
+### Show resources and components from current state
+
+- `terraform state list`
+
+### Show current state of specific resource/data
+
+- `terraform state show aws_vpc.myapp-vpc`
+
+### Using cli in terraform apply 
+
+-  `terraform apply -var "subnet_cidr_block=10.0.10.0/24"`
+
+### Applying configuration with variables
+
+- `terraform apply -var-file terraform-dev.tfvars` -> by default the variable file is `terraform.tfvars` and doesn't require to pass variable file
+
+### Setting avail_zone as custom tf environment variable
+
+- `export TF_VAR_avail_zone="eu-north-1a`
