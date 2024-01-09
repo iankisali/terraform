@@ -8,6 +8,7 @@ variable "avail_zone" {}
 variable "env_prefix" {}
 variable "my_ip" {}
 variable "instance_type" {}
+variable "public_key_location" {}
 
 resource "aws_vpc" "myapp-vpc" {
     cidr_block = var.vpc_cidr_blocks
@@ -89,6 +90,11 @@ resource "aws_security_group" "myapp-sg" {
     }
 }
 
+resource "aws_key_pair" "ssh-key" {
+    key_name = "server-key"
+    public_key = file(var.public_key_location)
+}
+
 /*resource "aws_default_security_group" "default-sg" {
     name = "myapp-sg"
     vpc_id = aws_vpc.myapp-vpc.id
@@ -141,9 +147,10 @@ resource "aws_instance" "myapp-server" {
     vpc_security_group_ids = [aws_security_group.myapp-sg.id]
     availability_zone = var.avail_zone
 
+    /*Assigning public ip*/
     associate_public_ip_address = true
 
-    key_name = "tf-server-key-pair"
+    key_name = aws_key_pair.ssh-key.key_name
 
     tags = {
       Name = "${var.env_prefix}-server"
@@ -169,4 +176,8 @@ output "dev-route-table-id" {
 
 output "aws_ami_id" {
     value = data.aws_ami.latest-amazon-linux-image.id
+}
+
+output "ec2-public-ip" {
+  value = aws_instance.myapp-server.public_ip
 }
