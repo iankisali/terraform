@@ -13,6 +13,10 @@ Infrastructure as Code with tf
 
 - `terraform apply`
 
+### Applying whole tf configuration file automatically without confirming
+
+- `terraform apply --auto-approve`
+
 ### Applying configuration with variables
 
 - `terraform apply -var-file target_resource.target_name`
@@ -52,3 +56,23 @@ Infrastructure as Code with tf
 ### Setting avail_zone as custom tf environment variable
 
 - `export TF_VAR_avail_zone="eu-north-1a`
+
+
+## Challenges Encountered
+When referencing the public key for ssh I got the error as:
+
+```
+Error: Invalid function argument
+│
+│   on main.tf line 168, in resource "aws_key_pair" "ssh-key":
+│  168:     public_key = file(var.public_key_location)
+│     ├────────────────
+│     │ while calling file(path)
+│     │ var.public_key_location is "/c/Users/admin/.ssh/id_rsa.pub"
+│
+│ Invalid value for "path" parameter: no file exists at "/c/Users/admin/.ssh/id_rsa.pub"; this function works only with files that are distributed as part of the configuration source code, so if this file will be        
+│ created by a resource in this configuration you must instead obtain this result from an attribute of that resource.
+```
+The path cannot be found. The solution to this is that the correct path in windows is:
+
+`C:/Users/admin/.ssh/id_rsa.pub`
