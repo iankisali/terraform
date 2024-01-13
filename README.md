@@ -75,4 +75,14 @@ Error: Invalid function argument
 ```
 The path cannot be found. The solution to this is that the correct path in windows is:
 
-`C:/Users/admin/.ssh/id_rsa.pub`
+- `C:/Users/admin/.ssh/id_rsa.pub`
+
+The command to obtain this path is:
+- Open python in terminal using command`python`
+- In python shell paste in following:
+    ```
+    import os
+    print(os.path.abspath("id_rsa.pub"))
+    ```
+- Expected output:
+`C:\Users\admin\.ssh\id_rsa.pub`
