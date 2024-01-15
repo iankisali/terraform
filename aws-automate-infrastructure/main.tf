@@ -29,7 +29,7 @@ resource "aws_subnet" "myapp-subnet-1" {
 resource "aws_internet_gateway" "myapp-igw" {
     vpc_id = aws_vpc.myapp-vpc.id
     tags = {
-        Name: "${var.env_prefix}-igw"
+        Name: "${var.env_prefix}-internetgateway"
     }
 }
 
@@ -40,15 +40,11 @@ resource "aws_route_table" "myapp-route-table" {
         gateway_id = aws_internet_gateway.myapp-igw.id
     }
     tags = {
-        Name: "${var.env_prefix}-rtb"
+        Name: "${var.env_prefix}-routetable"
     }
 }
 
-resource "aws_route_table_association" "a-rtb-subnet" {
-    subnet_id = aws_subnet.myapp-subnet-1.id
-    route_table_id = aws_route_table.myapp-route-table.id
-}
-
+/*Configuring default route table*/
 /*resource "aws_default_route_table" "main-rtb" {
     default_route_table_id = aws_vpc.myapp-vpc.default_route_table_id
 
@@ -60,6 +56,11 @@ resource "aws_route_table_association" "a-rtb-subnet" {
         Name: "${var.env_prefix}-main-rtb"
     }
 }*/
+
+resource "aws_route_table_association" "a-rtb-subnet" {
+    subnet_id = aws_subnet.myapp-subnet-1.id
+    route_table_id = aws_route_table.myapp-route-table.id
+}
 
 resource "aws_security_group" "myapp-sg" {
     name = "myapp-sg"
@@ -78,6 +79,7 @@ resource "aws_security_group" "myapp-sg" {
         cidr_blocks = ["0.0.0.0/0"]
     }
 
+    /*Allowing exiting of all traffic from all ports, protocols and cidr blocks*/
     egress {
         from_port = 0
         to_port = 0
@@ -90,13 +92,8 @@ resource "aws_security_group" "myapp-sg" {
     }
 }
 
-resource "aws_key_pair" "ssh-key" {
-    key_name = "server-key"
-    public_key = file(var.public_key_location)
-}
-
 /*resource "aws_default_security_group" "default-sg" {
-    name = "myapp-sg"
+    name = "myapp-default-sg"
     vpc_id = aws_vpc.myapp-vpc.id
 
     ingress {
@@ -124,9 +121,13 @@ resource "aws_key_pair" "ssh-key" {
     }
 }*/
 
+
+
+/*data means that tf expects the existance*/
 data "aws_ami" "latest-amazon-linux-image" {
     most_recent = true
     owners = ["amazon"]
+    /*defining criteria for querying*/
     filter {
         name = "name"
         values = ["amzn2-ami-kernel-5.10-hvm-2.0.20231206.0-x86_64-gp2"]
@@ -140,21 +141,31 @@ data "aws_ami" "latest-amazon-linux-image" {
 }
 
 resource "aws_instance" "myapp-server" {
+    /*setting ami dynamically*/
     ami = data.aws_ami.latest-amazon-linux-image.id
     instance_type = var.instance_type
 
+    /*optional arguments*/
     subnet_id = aws_subnet.myapp-subnet-1.id
-    vpc_security_group_ids = [aws_security_group.myapp-sg.id]
+    vpc_security_group_ids = [aws_security_group.myapp-sg.id]/*you can confure multipe sg*/
     availability_zone = var.avail_zone
 
-    /*Assigning public ip*/
+    /*Assigning public ip ->access from browser*/
     associate_public_ip_address = true
 
+    /*key_name = myapp-sg*/
     key_name = aws_key_pair.ssh-key.key_name
 
     tags = {
       Name = "${var.env_prefix}-server"
     }
+}
+
+resource "aws_key_pair" "ssh-key" {
+    key_name = "tf-server-key-pair"
+
+   /* public_key = "${file(var.public_key_location)}"*/
+    public_key = file(var.public_key_location)
 }
 
 
