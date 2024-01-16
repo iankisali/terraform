@@ -57,6 +57,14 @@ Infrastructure as Code with tf
 
 - `export TF_VAR_avail_zone="eu-north-1a`
 
+### Terraform vpc module [link](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest)
+
+## Best Practices
+1. Don't include sensitive data into configuration file i.e public key
+2. Use terraform apply with configuration file to make infrastructure changes instead of executing commands directly.
+3. Create own vpc and its infrastructure not default components
+4. Store .pem file ssh private key in .ssh folder adn restrict permissions
+5. Provisioners not recommended instead use `user_data` if available -> breaks idempotency
 
 ## Challenges Encountered
 When referencing the public key for ssh I got the error as:
