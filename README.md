@@ -1,5 +1,22 @@
 # Terraform
-Infrastructure as Code with tf
+Infrastructure as Code with Terraform. Tf is used to automate and manage infrastructer such as vpc, subnets, route table, internet gateway etc.
+Terraform is declarative meaning that you define what end result you want.
+Two main components of terraform include:
+- `tf-config`
+- `state`
+- `terraform.state` is a JSON file where tf terraform stores the state about your real world resources of your managed infrastructure
+
+*Datasource* alows data to be fetched for use in tf configuration
+
+*Resource* creates a new component
+
+*Provider* defines the cloud provider i.e aws, azure or gcp
+
+*Output* are like function return values
+
+*Variables* are like functon argument
+
+The difference between a `resource` and `data` is that resource is something created by and controlled by the script and data source in what terraform expects to exist.
 
 ### Initialize a working dir and install providers defined in tf config (main.tf)
 
