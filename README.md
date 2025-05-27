@@ -16,11 +16,23 @@ Two main components of terraform include:
 
 *Variables* are like functon argument
 
+*Provisioner* are used to run scripts inside the resouces created.
+
+*Modules* 
+
 The difference between a `resource` and `data` is that resource is something created by and controlled by the script and data source in what terraform expects to exist.
 
 ### Initialize a working dir and install providers defined in tf config (main.tf)
 
 - `terraform init`
+
+### Validates the terraform script
+
+- `terraform validate`
+
+### Checks syntax correctness
+
+- `terraform format`
 
 ### Previewing tf actions
 
